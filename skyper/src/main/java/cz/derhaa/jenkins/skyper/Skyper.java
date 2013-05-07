@@ -29,7 +29,7 @@ public class Skyper {
 
 	public final void run() throws SkypeException {
 		final ContactList list = Skype.getContactList();
-		final Friend friend = list.getFriend("karkulka.blatna");
+		final Friend friend = list.getFriend("xxx.zzz");
 		BuildMonitor monitor = new BuildMonitor(new BuildSendListener(friend), url, interval);
 		monitor.setResource(new JenkinsXmlResouce(url));
 		monitor.loop();
