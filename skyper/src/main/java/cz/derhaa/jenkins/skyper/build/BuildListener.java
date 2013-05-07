@@ -5,5 +5,8 @@ package cz.derhaa.jenkins.skyper.build;
  *
  */
 public interface BuildListener {
+	/**
+	 * @param message
+	 */
 	void notify(String message);
 }
