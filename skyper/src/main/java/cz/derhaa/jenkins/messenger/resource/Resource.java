@@ -1,11 +1,11 @@
 /**
  * 
  */
-package cz.derhaa.jenkins.skyper.resource;
+package cz.derhaa.jenkins.messenger.resource;
 
 import java.util.Set;
 
-import cz.derhaa.jenkins.skyper.build.Build;
+import cz.derhaa.jenkins.messenger.build.Build;
 
 /**
  * @author derhaa

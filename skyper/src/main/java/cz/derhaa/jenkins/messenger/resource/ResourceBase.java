@@ -1,4 +1,4 @@
-package cz.derhaa.jenkins.skyper.resource;
+package cz.derhaa.jenkins.messenger.resource;
 /**
  * @author derhaa
  *

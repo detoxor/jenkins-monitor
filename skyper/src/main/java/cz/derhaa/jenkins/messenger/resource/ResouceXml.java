@@ -1,9 +1,10 @@
-package cz.derhaa.jenkins.skyper.resource;
+package cz.derhaa.jenkins.messenger.resource;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -26,8 +27,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import cz.derhaa.jenkins.skyper.build.Build;
-import cz.derhaa.jenkins.skyper.build.SkyperException;
+import cz.derhaa.jenkins.messenger.build.Build;
+import cz.derhaa.jenkins.messenger.build.MessengerException;
 
 /**
  * @author derhaa
@@ -49,9 +50,9 @@ public class ResouceXml extends ResourceBase {
 			this.dbf = DocumentBuilderFactory.newInstance();
 			this.docb = dbf.newDocumentBuilder();
 		} catch (MalformedURLException e) {
-			throw new SkyperException("Fail load jenkins job metadata", e);
+			throw new MessengerException("Fail load jenkins job metadata", e);
 		} catch (ParserConfigurationException e) {
-			throw new SkyperException("Document building failed", e);
+			throw new MessengerException("Document building failed", e);
 		}
 	}
 
@@ -85,7 +86,7 @@ public class ResouceXml extends ResourceBase {
 				try {
 					dateString = dateString.substring(0, 22) + dateString.substring(23);
 				} catch (IndexOutOfBoundsException e) {
-					throw new SkyperException("Invalid length", e);
+					throw new MessengerException("Invalid length", e);
 				}
 				final Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.ENGLISH).parse(dateString);
 				final Build build = new Build(name, webUrl, Integer.valueOf(lastBuildLabel), date, lastBuildStatus, activity);
@@ -94,6 +95,8 @@ public class ResouceXml extends ResourceBase {
 			}
 			reader.close();
 			bais.close();
+		} catch (ConnectException e) {
+			throw new MessengerException("Could not connect", e);
 		} catch (SAXException e) {
 			LOGGER.error("Parsing file failed", e);
 		} catch (ParseException e) {

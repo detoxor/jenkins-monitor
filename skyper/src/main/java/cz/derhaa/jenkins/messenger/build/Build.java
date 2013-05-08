@@ -1,7 +1,7 @@
 /**
  * 
  */
-package cz.derhaa.jenkins.skyper.build;
+package cz.derhaa.jenkins.messenger.build;
 
 import java.util.Date;
 

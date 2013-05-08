@@ -1,4 +1,4 @@
-package cz.derhaa.jenkins.skyper;
+package cz.derhaa.jenkins.messenger;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -7,10 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import cz.derhaa.jenkins.skyper.build.BuildMonitor;
-import cz.derhaa.jenkins.skyper.build.SkyperException;
-import cz.derhaa.jenkins.skyper.resource.ResouceXml;
-import cz.derhaa.jenkins.skyper.sender.SenderGMail;
+import cz.derhaa.jenkins.messenger.build.BuildMonitor;
+import cz.derhaa.jenkins.messenger.build.MessengerException;
+import cz.derhaa.jenkins.messenger.resource.ResouceXml;
+import cz.derhaa.jenkins.messenger.sender.SenderSkype;
 
 /**
  * @author derhaa
@@ -29,13 +29,13 @@ public class App { // NOPMD by tocecz on 8.5.13 7:35
 			fis = new FileInputStream(new File(filePath));
 			props.load(fis);
 		} catch (IOException e) {
-			throw new SkyperException("Fail load properties", e);
+			throw new MessengerException("Fail load properties", e);
 		} finally {
 			if (fis != null) {
 				try {
 					fis.close();
 				} catch (IOException e) {
-					throw new SkyperException(e);
+					throw new MessengerException(e);
 				}
 			}
 		}
@@ -53,9 +53,9 @@ public class App { // NOPMD by tocecz on 8.5.13 7:35
 		}
 		// contacts
 		List<String> forMessage = new ArrayList<String>();
-		String contacts = props.getProperty("users");
+		String contacts = props.getProperty("contacts");
 		if (contacts == null) {
-			throw new SkyperException("Must define property 'users' in configuration file!");
+			throw new MessengerException("Must define property 'users' in configuration file!");
 		}
 		if (contacts.indexOf(SEPARATOR) == -1) {
 			forMessage.add(contacts);
@@ -71,7 +71,7 @@ public class App { // NOPMD by tocecz on 8.5.13 7:35
 		final String url = props.getProperty("jenkins.url");
 		final BuildMonitor monitor = new BuildMonitor(jobs);
 		monitor.setResource(new ResouceXml(url));
-		monitor.setListener(new SenderGMail(forMessage, url));
+		monitor.setSender(new SenderSkype(forMessage, props));
 		monitor.run(interval);
 	}
 }

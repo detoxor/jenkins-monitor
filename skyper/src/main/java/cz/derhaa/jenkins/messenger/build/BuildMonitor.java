@@ -1,4 +1,4 @@
-package cz.derhaa.jenkins.skyper.build;
+package cz.derhaa.jenkins.messenger.build;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -9,7 +9,8 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cz.derhaa.jenkins.skyper.resource.Resource;
+import cz.derhaa.jenkins.messenger.resource.Resource;
+import cz.derhaa.jenkins.messenger.sender.Sender;
 
 /**
  * @author derhaa
@@ -19,15 +20,15 @@ public class BuildMonitor {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(BuildMonitor.class);
 
-	private static final String FAIL = "failure";
-	private static final String FAIL_MESSAGE = "(rain) Failed";
-	private static final String FAIL_STILL_MESSAGE = "(rain) Still failing";
-	private static final String SUCCESS = "success";
-	private static final String SUCCESS_MESSAGE = "(sun) Success";
-	private static final String FIXED_MESSAGE = "(sun) Fixed";
-	private static final String UNSTABLE = "unstable";
-	private static final String UNSTABLE_MESSAGE = "(tumbleweed) Unstable";
-	private static final String STABLE_MESSAGE = "(sun) Return to Success";
+	public static final String FAIL = "failure";
+	private static final String FAIL_MESSAGE = "Failed";
+	private static final String FAIL_STILL_MESSAGE = "Still failing";
+	public static final String SUCCESS = "success";
+	private static final String SUCCESS_MESSAGE = "Success";
+	private static final String FIXED_MESSAGE = "Fixed";
+	public static final String UNSTABLE = "unstable";
+	private static final String UNSTABLE_MESSAGE = "Unstable";
+	private static final String STABLE_MESSAGE = "Return to Success";
 	private Map<String, Build> cache = new HashMap<String, Build>();
 	
 	private final StringBuilder stringBuilder;
@@ -50,7 +51,7 @@ public class BuildMonitor {
 						try {
 							Thread.sleep(interval);
 						} catch (InterruptedException e) {
-							throw new SkyperException("Loop failed", e);
+							throw new MessengerException("Loop failed", e);
 						}
 					}
 				}
@@ -66,17 +67,17 @@ public class BuildMonitor {
 			final String status = build.getLastBuildStatus();
 			final Build actual = cache.get(name);
 			if (actual == null) {// not exist in cache
-				listener.notify(build.getName(), build.getLastBuildLabel().toString(), handleStatus(status, null));
+				listener.notify(build.getName(), build.getLastBuildLabel().toString(), status, handleStatusMessage(status, null));
 			} else if (!actual.getLastBuildStatus().equals(status)) {
-				listener.notify(build.getName(), build.getLastBuildLabel().toString(), handleStatus(status, actual.getLastBuildStatus()));
+				listener.notify(build.getName(), build.getLastBuildLabel().toString(), status, handleStatusMessage(status, actual.getLastBuildStatus()));
 			} else if (actual.getLastBuildStatus().equals(status) && FAIL.equals(status)) {
-				listener.notify(name, build.getLastBuildLabel().toString(), FAIL_STILL_MESSAGE);				
+				listener.notify(name, build.getLastBuildLabel().toString(), status, FAIL_STILL_MESSAGE);				
 			}
 		}
 		cache = new HashMap<String, Build>(builds);
 	}
 
-	private final String handleStatus(final String newStatus, final String oldStatus) {
+	private final String handleStatusMessage(final String newStatus, final String oldStatus) {
 		final String foo = newStatus.toLowerCase(Locale.ENGLISH);
 		final String hoo = oldStatus == null ? null : oldStatus.toLowerCase(Locale.ENGLISH);
 		String retval = "N/A";
@@ -121,13 +122,13 @@ public class BuildMonitor {
 	
 	// --- IoC
 	private Resource resource;
-	private BuildListener listener;
+	private Sender listener;
 	
 	public void setResource(final Resource resource) {
 		this.resource = resource;
 	}
 	
-	public void setListener(final BuildListener listener) {
+	public void setSender(final Sender listener) {
 		this.listener = listener;
 	}
 }
