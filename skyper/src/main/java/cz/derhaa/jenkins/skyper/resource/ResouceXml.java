@@ -1,4 +1,4 @@
-package cz.derhaa.jenkins.skyper.build;
+package cz.derhaa.jenkins.skyper.resource;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -26,26 +26,36 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import cz.derhaa.jenkins.skyper.build.Build;
+import cz.derhaa.jenkins.skyper.build.SkyperException;
+
 /**
  * @author derhaa
  * 
  */
-public class ResouceXml implements Resource {
+public class ResouceXml extends ResourceBase {
 
 	private final URL url;
 	private static final Logger LOGGER = LoggerFactory.getLogger(ResouceXml.class);
 	private final StringBuilder stringBuilder;
+	private final DocumentBuilderFactory dbf;
+	private final DocumentBuilder docb;
 
 	public ResouceXml(final String jenkinsUrl) {
+		super(jenkinsUrl);
 		try {
 			this.url = new URL(jenkinsUrl+"/cc.xml");
 			this.stringBuilder = new StringBuilder();
+			this.dbf = DocumentBuilderFactory.newInstance();
+			this.docb = dbf.newDocumentBuilder();
 		} catch (MalformedURLException e) {
 			throw new SkyperException("Fail load jenkins job metadata", e);
+		} catch (ParserConfigurationException e) {
+			throw new SkyperException("Document building failed", e);
 		}
 	}
 
-	public Set<Build> getBuilds() {
+	public final Set<Build> getBuilds() {
 		final Set<Build> retval = new HashSet<Build>();
 		try {
 			final URLConnection connection = url.openConnection();
@@ -58,9 +68,6 @@ public class ResouceXml implements Resource {
 			}
 			final String xml = stringBuilder.toString().replaceAll("&nbsp;", " ");
 			final ByteArrayInputStream bais = new ByteArrayInputStream(xml.getBytes());
-
-			final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			final DocumentBuilder docb = dbf.newDocumentBuilder();
 			final Document document = docb.parse(bais);
 
 			final NodeList projects = document.getElementsByTagName("Project");
@@ -87,8 +94,6 @@ public class ResouceXml implements Resource {
 			}
 			reader.close();
 			bais.close();
-		} catch (ParserConfigurationException e) {
-			LOGGER.error("Document building failed", e);			
 		} catch (SAXException e) {
 			LOGGER.error("Parsing file failed", e);
 		} catch (ParseException e) {
@@ -98,5 +103,4 @@ public class ResouceXml implements Resource {
 		} 
 		return retval;
 	}
-
 }

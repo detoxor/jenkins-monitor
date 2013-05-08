@@ -6,7 +6,10 @@ package cz.derhaa.jenkins.skyper.build;
  */
 public interface BuildListener {
 	/**
+	 * 
+	 * @param buildName
+	 * @param lastBuildLabel
 	 * @param message
 	 */
-	void notify(String message);
+	void notify(String buildName, String lastBuildLabel, String message);
 }

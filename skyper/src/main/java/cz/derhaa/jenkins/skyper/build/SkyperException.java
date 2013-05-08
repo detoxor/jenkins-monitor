@@ -3,8 +3,8 @@ package cz.derhaa.jenkins.skyper.build;
 @SuppressWarnings("serial")
 public class SkyperException extends RuntimeException {
 
-	public SkyperException() {
-		super();
+	public SkyperException(String message) {
+		super(message);
 	}
 
 	public SkyperException(final Throwable cause) {
