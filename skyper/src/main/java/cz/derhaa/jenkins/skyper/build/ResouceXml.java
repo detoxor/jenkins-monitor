@@ -11,6 +11,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -29,38 +30,40 @@ import org.xml.sax.SAXException;
  * @author derhaa
  * 
  */
-public class JenkinsXmlResouce implements ResourceStrategy {
+public class ResouceXml implements Resource {
 
 	private final URL url;
-	private static final Logger logger = LoggerFactory.getLogger(JenkinsXmlResouce.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ResouceXml.class);
+	private final StringBuilder stringBuilder;
 
-	public JenkinsXmlResouce(String jenkinsUrl) {
+	public ResouceXml(final String jenkinsUrl) {
 		try {
-			this.url = new URL(jenkinsUrl);
+			this.url = new URL(jenkinsUrl+"/cc.xml");
+			this.stringBuilder = new StringBuilder();
 		} catch (MalformedURLException e) {
-			throw new RuntimeException("Fail load jenkins job metadata", e);
+			throw new SkyperException("Fail load jenkins job metadata", e);
 		}
 	}
 
 	public Set<Build> getBuilds() {
-		Set<Build> retval = new HashSet<Build>();
+		final Set<Build> retval = new HashSet<Build>();
 		try {
-			URLConnection connection = url.openConnection();
+			final URLConnection connection = url.openConnection();
 			connection.connect();
-			BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-			StringBuilder sb = new StringBuilder();
+			final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+			stringBuilder.setLength(0);
 			String line = "";
 			while ((line = reader.readLine()) != null) {
-				sb.append(line);
+				stringBuilder.append(line);
 			}
-			String xml = sb.toString().replaceAll("&nbsp;", " ");
-			ByteArrayInputStream bais = new ByteArrayInputStream(xml.getBytes());
+			final String xml = stringBuilder.toString().replaceAll("&nbsp;", " ");
+			final ByteArrayInputStream bais = new ByteArrayInputStream(xml.getBytes());
 
-			DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-			DocumentBuilder db = dbf.newDocumentBuilder();
-			Document doc = db.parse(bais);
+			final DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+			final DocumentBuilder docb = dbf.newDocumentBuilder();
+			final Document document = docb.parse(bais);
 
-			NodeList projects = doc.getElementsByTagName("Project");
+			final NodeList projects = document.getElementsByTagName("Project");
 			final int count = projects.getLength();
 			for (int x = 0; x < count; x++) {
 				final Node project = projects.item(x);
@@ -71,27 +74,27 @@ public class JenkinsXmlResouce implements ResourceStrategy {
 				final String lastBuildTime = attrs.getNamedItem("lastBuildTime").getNodeValue();
 				final String lastBuildStatus = attrs.getNamedItem("lastBuildStatus").getNodeValue();
 				final String activity = attrs.getNamedItem("activity").getNodeValue();
-				String s = lastBuildTime.replace("Z", "+00:00");
+				String dateString = lastBuildTime.replace("Z", "+00:00");
 				try {
-					s = s.substring(0, 22) + s.substring(23);
+					dateString = dateString.substring(0, 22) + dateString.substring(23);
 				} catch (IndexOutOfBoundsException e) {
-					throw new RuntimeException("Invalid length", e);
+					throw new SkyperException("Invalid length", e);
 				}
-				Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").parse(s);
-				Build build = new Build(name, webUrl, Integer.valueOf(lastBuildLabel), date, lastBuildStatus, activity);
-				logger.info("Build: "+build.getName()+ " has been parsed");
+				final Date date = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ", Locale.ENGLISH).parse(dateString);
+				final Build build = new Build(name, webUrl, Integer.valueOf(lastBuildLabel), date, lastBuildStatus, activity);
+				LOGGER.info("Build: "+build.getName()+ " has been parsed");
 				retval.add(build);
 			}
 			reader.close();
 			bais.close();
 		} catch (ParserConfigurationException e) {
-			logger.error("Document building failed", e);			
+			LOGGER.error("Document building failed", e);			
 		} catch (SAXException e) {
-			logger.error("Parsing file failed", e);
+			LOGGER.error("Parsing file failed", e);
 		} catch (ParseException e) {
-			logger.error("Date convert failed", e);
+			LOGGER.error("Date convert failed", e);
 		} catch (IOException e) { // openConnection() failed
-			logger.error("Read resouce failed", e);			
+			LOGGER.error("Read resouce failed", e);			
 		} 
 		return retval;
 	}

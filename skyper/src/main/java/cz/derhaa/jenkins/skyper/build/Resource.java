@@ -9,7 +9,7 @@ import java.util.Set;
  * @author derhaa
  *
  */
-public interface ResourceStrategy {
+public interface Resource {
 
 	Set<Build> getBuilds();
 }

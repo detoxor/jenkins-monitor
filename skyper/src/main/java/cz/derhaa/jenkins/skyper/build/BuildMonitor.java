@@ -1,6 +1,7 @@
 package cz.derhaa.jenkins.skyper.build;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -12,38 +13,37 @@ import org.slf4j.LoggerFactory;
  * @author derhaa
  * 
  */
-public class BuildMonitor implements IBuildMonitor {
+public class BuildMonitor {
 
-	private static final Logger logger = LoggerFactory.getLogger(BuildMonitor.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(BuildMonitor.class);
 
 	private static final String FAIL = "failure";
 	private static final String SUCCESS = "success";
 	private static final String UNSTABLE = "unstable";
 	private Map<String, Build> cache = new HashMap<String, Build>();
-	private final BuildListener listener;
+	
 	private final String jenkinsUrl;
 	private final int interval;
-	private StringBuilder sb;
+	private final StringBuilder stringBuilder;
 	private static final String PREFIX = "[Jenkins]";
 	
 
-	public BuildMonitor(final BuildListener listener, final String jenkinsUrl, final int interval) {
-		this.listener = listener;
+	public BuildMonitor(final String jenkinsUrl, final int interval) {
 		this.jenkinsUrl = jenkinsUrl;
 		this.interval = interval;
-		this.sb = new StringBuilder();
+		this.stringBuilder = new StringBuilder();
 	}
 
 	public void loop() {
 		new Thread(new Runnable() {
 			public void run() {
 				while (true) {
-					logger.info("Loop run");
+					LOGGER.info("Loop run");
 					checkNewBuilds();
 					try {
 						Thread.sleep(interval);
 					} catch (InterruptedException e) {
-						throw new RuntimeException("Loop failed", e);
+						throw new SkyperException("Loop failed", e);
 					}
 				}
 			}
@@ -51,12 +51,12 @@ public class BuildMonitor implements IBuildMonitor {
 	}
 
 	private final void checkNewBuilds() {
-		Map<String, Build> builds = fetchBuilds();
+		final Map<String, Build> builds = fetchBuilds();
 		for (Entry<String, Build> entry : builds.entrySet()) {
-			Build build = entry.getValue();
-			String name = build.getName();
-			String status = build.getLastBuildStatus();
-			Build actual = cache.get(name);
+			final Build build = entry.getValue();
+			final String name = build.getName();
+			final String status = build.getLastBuildStatus();
+			final Build actual = cache.get(name);
 			if (actual == null) {// not exist in cache
 				handleNewBuild(build, null);
 			} else if (!actual.getLastBuildLabel().equals(status)) {
@@ -67,10 +67,10 @@ public class BuildMonitor implements IBuildMonitor {
 	}
 
 	private final void handleNewBuild(final Build build, final String oldStatus) {
-		String foo = build.getLastBuildStatus().toLowerCase();
-		String hoo = oldStatus == null ? null : oldStatus.toLowerCase();
+		final String foo = build.getLastBuildStatus().toLowerCase();
+		final String hoo = oldStatus == null ? null : oldStatus.toLowerCase(Locale.ENGLISH);
 		String event = "N/A";
-		sb.setLength(0);
+		stringBuilder.setLength(0);
 		if (hoo == null) {
 			if (foo.equals(FAIL)) {
 				event = "(rain), Failed";
@@ -90,15 +90,15 @@ public class BuildMonitor implements IBuildMonitor {
 				event = "(sun), Success";
 			}
 		}
-		sb.append(PREFIX).append(event).append(" ").append(build.getName()).append(" - ").append(jenkinsUrl).append("/job/")
+		stringBuilder.append(PREFIX).append(event).append(" ").append(build.getName()).append(" - ").append(jenkinsUrl).append("/job/")
 			.append(build.getName()).append("/")
 			.append(build.getLastBuildLabel());
-		listener.notify(sb.toString());
+		listener.notify(stringBuilder.toString());
 	}
 
 	private final Map<String, Build> fetchBuilds() {
-		Map<String, Build> retval = new HashMap<String, Build>();
-		Set<Build> builds = resource.getBuilds();
+		final Map<String, Build> retval = new HashMap<String, Build>();
+		final Set<Build> builds = resource.getBuilds();
 		for (Build build : builds) {
 			retval.put(build.getName(), build);
 		}
@@ -107,9 +107,14 @@ public class BuildMonitor implements IBuildMonitor {
 	
 	
 	// --- IoC
-	private ResourceStrategy resource;
+	private Resource resource;
+	private BuildListener listener;
 	
-	public void setResource(ResourceStrategy resource) {
+	public void setResource(final Resource resource) {
 		this.resource = resource;
+	}
+	
+	public void setListener(final BuildListener listener) {
+		this.listener = listener;
 	}
 }

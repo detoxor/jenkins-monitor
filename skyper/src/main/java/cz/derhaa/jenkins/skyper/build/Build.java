@@ -17,16 +17,16 @@ public class Build {
 	private final Date lastBuildTime;
 	private final String lastBuildStatus;
 	private final String activity;
-	private StringBuilder sb;
+	private final StringBuilder stringBuilder;
 	
-	public Build(String name, String webUrl, Integer lastBuildLabel, Date lastBuildTime, String lastBuildStatus, String activity) {
+	public Build(final String name, final String webUrl, final Integer lastBuildLabel, final Date lastBuildTime, final String lastBuildStatus, final String activity) {
 		this.name = name;
 		this.webUrl = webUrl;
 		this.lastBuildLabel = lastBuildLabel;
 		this.lastBuildTime = lastBuildTime;
 		this.lastBuildStatus = lastBuildStatus;
 		this.activity = activity;
-		this.sb = new StringBuilder();
+		this.stringBuilder = new StringBuilder();
 	}
 
 	public String getName() {
@@ -55,13 +55,13 @@ public class Build {
 
 	@Override
 	public String toString() {
-		sb.append("Jenkins Build:").append("\n");
-		sb.append("Name: ").append(name).append("\n");
-		sb.append("WebUrl: ").append(webUrl).append("\n");
-		sb.append("BuildLabel: ").append(lastBuildLabel).append("\n");
-		sb.append("BuildTime: ").append(lastBuildTime).append("\n");
-		sb.append("BuildStatus: ").append(lastBuildStatus).append("\n");
-		sb.append("Activity: ").append(activity);
-		return sb.toString();
+		stringBuilder.append("Jenkins Build:").append("\n");
+		stringBuilder.append("Name: ").append(name).append("\n");
+		stringBuilder.append("WebUrl: ").append(webUrl).append("\n");
+		stringBuilder.append("BuildLabel: ").append(lastBuildLabel).append("\n");
+		stringBuilder.append("BuildTime: ").append(lastBuildTime).append("\n");
+		stringBuilder.append("BuildStatus: ").append(lastBuildStatus).append("\n");
+		stringBuilder.append("Activity: ").append(activity);
+		return stringBuilder.toString();
 	}
 }
