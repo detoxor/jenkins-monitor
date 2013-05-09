@@ -1,4 +1,4 @@
-package cz.derhaa.jenkins.messenger.util;
+package cz.derhaa.jenkins.monitor.util;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,9 +1,9 @@
-package cz.derhaa.jenkins.messenger.sender;
+package cz.derhaa.jenkins.monitor.sender;
 
 import java.util.List;
 import java.util.Properties;
 
-import cz.derhaa.jenkins.messenger.util.Tool;
+import cz.derhaa.jenkins.monitor.util.Tool;
 /**
  * Common implementation which keeps data as:
  * <ol>

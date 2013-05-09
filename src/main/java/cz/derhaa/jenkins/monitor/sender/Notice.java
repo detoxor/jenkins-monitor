@@ -1,6 +1,6 @@
-package cz.derhaa.jenkins.messenger.sender;
+package cz.derhaa.jenkins.monitor.sender;
 
-import cz.derhaa.jenkins.messenger.build.Build;
+import cz.derhaa.jenkins.monitor.build.Build;
 /**
  * Basic imutable pojo to describe build and message
  * @author derhaa

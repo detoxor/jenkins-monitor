@@ -1,4 +1,4 @@
-package cz.derhaa.jenkins.messenger.build;
+package cz.derhaa.jenkins.monitor.build;
 
 @SuppressWarnings("serial")
 public class MessengerException extends RuntimeException {

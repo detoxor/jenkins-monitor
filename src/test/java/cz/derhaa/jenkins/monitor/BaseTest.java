@@ -1,11 +1,11 @@
-package cz.derhaa.jenkins.messenger;
+package cz.derhaa.jenkins.monitor;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import cz.derhaa.jenkins.messenger.build.MessengerException;
+import cz.derhaa.jenkins.monitor.build.MessengerException;
 /**
  * Only load configuration properties
  * @author derhaa

@@ -1,4 +1,4 @@
-package cz.derhaa.jenkins.messenger.sender;
+package cz.derhaa.jenkins.monitor.sender;
 
 import java.text.Normalizer;
 import java.text.Normalizer.Form;
@@ -14,8 +14,8 @@ import com.skype.Friend;
 import com.skype.Skype;
 import com.skype.SkypeException;
 
-import cz.derhaa.jenkins.messenger.build.Build;
-import cz.derhaa.jenkins.messenger.util.Tool;
+import cz.derhaa.jenkins.monitor.build.Build;
+import cz.derhaa.jenkins.monitor.util.Tool;
 
 public class SenderSkype extends SenderBase {
 

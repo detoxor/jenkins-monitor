@@ -1,4 +1,4 @@
-package cz.derhaa.jenkins.messenger.sender;
+package cz.derhaa.jenkins.monitor.sender;
 
 import java.util.Arrays;
 import java.util.Date;
@@ -7,9 +7,11 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 
-import cz.derhaa.jenkins.messenger.BaseTest;
-import cz.derhaa.jenkins.messenger.build.Build;
-import cz.derhaa.jenkins.messenger.util.Tool;
+import cz.derhaa.jenkins.monitor.BaseTest;
+import cz.derhaa.jenkins.monitor.build.Build;
+import cz.derhaa.jenkins.monitor.sender.Notice;
+import cz.derhaa.jenkins.monitor.sender.SenderSkype;
+import cz.derhaa.jenkins.monitor.util.Tool;
 
 public class SenderSkypeTest extends BaseTest {
 

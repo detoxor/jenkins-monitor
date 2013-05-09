@@ -1,4 +1,4 @@
-package cz.derhaa.jenkins.messenger.build;
+package cz.derhaa.jenkins.monitor.build;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -10,10 +10,10 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cz.derhaa.jenkins.messenger.resource.Resource;
-import cz.derhaa.jenkins.messenger.sender.Notice;
-import cz.derhaa.jenkins.messenger.sender.SendListener;
-import cz.derhaa.jenkins.messenger.util.Tool;
+import cz.derhaa.jenkins.monitor.resource.Resource;
+import cz.derhaa.jenkins.monitor.sender.Notice;
+import cz.derhaa.jenkins.monitor.sender.SendListener;
+import cz.derhaa.jenkins.monitor.util.Tool;
 
 /**
  * @author derhaa

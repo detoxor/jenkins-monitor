@@ -1,15 +1,15 @@
-package cz.derhaa.jenkins.messenger;
+package cz.derhaa.jenkins.monitor;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
 
-import cz.derhaa.jenkins.messenger.build.BuildMonitor;
-import cz.derhaa.jenkins.messenger.build.MessengerException;
-import cz.derhaa.jenkins.messenger.resource.ResouceXml;
-import cz.derhaa.jenkins.messenger.sender.SenderGMailSSL;
-import cz.derhaa.jenkins.messenger.util.Tool;
+import cz.derhaa.jenkins.monitor.build.BuildMonitor;
+import cz.derhaa.jenkins.monitor.build.MessengerException;
+import cz.derhaa.jenkins.monitor.resource.ResouceXml;
+import cz.derhaa.jenkins.monitor.sender.SenderGMailSSL;
+import cz.derhaa.jenkins.monitor.util.Tool;
 
 /**
  * @author derhaa

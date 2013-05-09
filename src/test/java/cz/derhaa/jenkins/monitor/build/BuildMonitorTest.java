@@ -1,4 +1,4 @@
-package cz.derhaa.jenkins.messenger.build;
+package cz.derhaa.jenkins.monitor.build;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -7,8 +7,10 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 
-import cz.derhaa.jenkins.messenger.resource.ResourceBase;
-import cz.derhaa.jenkins.messenger.util.Tool;
+import cz.derhaa.jenkins.monitor.build.Build;
+import cz.derhaa.jenkins.monitor.build.BuildMonitor;
+import cz.derhaa.jenkins.monitor.resource.ResourceBase;
+import cz.derhaa.jenkins.monitor.util.Tool;
 
 public class BuildMonitorTest {
 

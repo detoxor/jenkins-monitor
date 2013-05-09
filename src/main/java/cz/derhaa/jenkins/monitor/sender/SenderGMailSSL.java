@@ -1,4 +1,4 @@
-package cz.derhaa.jenkins.messenger.sender;
+package cz.derhaa.jenkins.monitor.sender;
 
 import java.util.List;
 import java.util.Properties;
@@ -13,9 +13,9 @@ import javax.mail.internet.MimeMessage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import cz.derhaa.jenkins.messenger.build.Build;
-import cz.derhaa.jenkins.messenger.build.MessengerException;
-import cz.derhaa.jenkins.messenger.util.Tool;
+import cz.derhaa.jenkins.monitor.build.Build;
+import cz.derhaa.jenkins.monitor.build.MessengerException;
+import cz.derhaa.jenkins.monitor.util.Tool;
 /**
  * Basic implementation of sending messages via ssl based gmail smtp server.
  * @author derhaa

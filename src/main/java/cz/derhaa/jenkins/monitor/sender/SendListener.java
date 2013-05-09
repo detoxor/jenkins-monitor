@@ -1,4 +1,4 @@
-package cz.derhaa.jenkins.messenger.sender;
+package cz.derhaa.jenkins.monitor.sender;
 
 import java.util.List;
 /**

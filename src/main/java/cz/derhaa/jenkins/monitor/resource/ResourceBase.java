@@ -1,4 +1,4 @@
-package cz.derhaa.jenkins.messenger.resource;
+package cz.derhaa.jenkins.monitor.resource;
 /**
  * Only keeps jenkins url
  * @author derhaa

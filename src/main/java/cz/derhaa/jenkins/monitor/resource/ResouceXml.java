@@ -1,4 +1,4 @@
-package cz.derhaa.jenkins.messenger.resource;
+package cz.derhaa.jenkins.monitor.resource;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -27,8 +27,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import cz.derhaa.jenkins.messenger.build.Build;
-import cz.derhaa.jenkins.messenger.build.MessengerException;
+import cz.derhaa.jenkins.monitor.build.Build;
+import cz.derhaa.jenkins.monitor.build.MessengerException;
 
 /**
  * Implementation for resource XML given from jenkins url API.
