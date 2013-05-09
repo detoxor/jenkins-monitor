@@ -1,6 +1,7 @@
-
-/skyper/.settings
-/skyper/target
-/skyper/.classpath
-/skyper/.project
-/skyper/.pmd
+/bin
+/reports
+.settings
+/target
+.classpath
+.project
+.pmd
