@@ -2,7 +2,6 @@ package cz.derhaa.jenkins.messenger.sender;
 
 import java.util.List;
 import java.util.Properties;
-
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
@@ -14,25 +13,28 @@ import javax.mail.internet.MimeMessage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import cz.derhaa.jenkins.messenger.build.Build;
+import cz.derhaa.jenkins.messenger.build.MessengerException;
+import cz.derhaa.jenkins.messenger.util.Tool;
 /**
- * 
+ * Basic implementation of sending messages via ssl based gmail smtp server.
  * @author derhaa
- *
  */
-public class SenderGMail extends SenderBase {
+public class SenderGMailSSL extends SenderBase {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(SenderGMail.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(SenderGMailSSL.class);
 	private InternetAddress[] addresses;
 	private final StringBuilder stringBuilder = new StringBuilder();
 	private MimeMessage mimeMsg;
-	
-	public SenderGMail(final List<String> contacts, final Properties properties) {
-		super(contacts, properties);
-		for (String string : contacts) {
-			stringBuilder.append(string).append(",");
-		}
+	/**
+	 * Send given contacts messages about jenkins build statuses
+	 * @param contacts emails of peoples
+	 * @param properties
+	 */
+	public SenderGMailSSL(final Properties properties) {
+		super(properties);
 		try {
-			this.addresses = InternetAddress.parse(stringBuilder.toString());
+			this.addresses = InternetAddress.parse(properties.getProperty(Tool.CONTACTS));
 			stringBuilder.setLength(0);
 			Properties props = new Properties();
 			props.put("mail.smtp.host", "smtp.gmail.com");
@@ -43,36 +45,46 @@ public class SenderGMail extends SenderBase {
 			Session session = Session.getDefaultInstance(props,
 				new javax.mail.Authenticator() {
 					protected PasswordAuthentication getPasswordAuthentication() {
-						return new PasswordAuthentication(properties.getProperty("user.mail"),properties.getProperty("user.pass"));//""
+						return new PasswordAuthentication(properties.getProperty(Tool.SENDER_MAIL),properties.getProperty(Tool.SENDER_EMAIL_PASS));//""
 					}
 				}
 			);
 			mimeMsg = new MimeMessage(session);
-			mimeMsg.setFrom(new InternetAddress(properties.getProperty("user.mail")));
+			mimeMsg.setFrom(new InternetAddress(properties.getProperty(Tool.SENDER_MAIL)));
 			mimeMsg.setRecipients(Message.RecipientType.TO,	addresses);
 			mimeMsg.setSubject("Jenkins - build statuses");
 		} catch (AddressException e) {
 			LOGGER.error("Error during parsing emails", e);
+			throw new MessengerException(e);
 		} catch (MessagingException e) {
 			LOGGER.error("Settings of mail failed", e);
+			throw new MessengerException(e);
 		}
 	}
-
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
-	public void notify(String buildName, String lastBuildLabel, String lastBuildStatus, String message) {
+	public void sendNotices(List<Notice> notices) {
 		stringBuilder.setLength(0);
-		stringBuilder.append("[Jenkins]")
-			.append(" [").append(buildName).append("] ")
-			.append(message).append(" - ").append(jenkinsUrl).append("/job/")
-			.append(buildName).append("/")
-			.append(lastBuildLabel).append("\n");
+		for (Notice notice : notices) {
+			Build build = notice.getBuild();
+			String buildName = build.getName();
+			String lastBuildLabel = build.getLastBuildLabel().toString();
+			String message = notice.getMessage();
+			stringBuilder.append("[Jenkins]")
+				.append(" [").append(buildName).append("] ")
+				.append(message).append(" - ").append(jenkinsUrl).append("/job/")
+				.append(buildName).append("/")
+				.append(lastBuildLabel).append("\n\n");			
+		}
 		try {
 			mimeMsg.setText(stringBuilder.toString());
 			Transport.send(mimeMsg);
 			LOGGER.info("Message has been sended to "+addresses.toString()+". Content of message: "+stringBuilder.toString());
-			stringBuilder.setLength(0);
 		} catch (MessagingException e) {
 			LOGGER.error("Send of mail failed", e);
-		}
+			throw new MessengerException(e);
+		}		
 	}
 }

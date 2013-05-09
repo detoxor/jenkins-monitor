@@ -1,13 +1,10 @@
-/**
- * 
- */
 package cz.derhaa.jenkins.messenger.build;
 
 import java.util.Date;
 
 /**
+ * Basic imutable pojo for jenkins build object
  * @author derhaa
- *
  */
 public class Build {
 
@@ -18,7 +15,15 @@ public class Build {
 	private final String lastBuildStatus;
 	private final String activity;
 	private final StringBuilder stringBuilder;
-	
+	/**
+	 * Complete describe of jenkins build
+	 * @param name
+	 * @param webUrl
+	 * @param lastBuildLabel
+	 * @param lastBuildTime
+	 * @param lastBuildStatus
+	 * @param activity
+	 */
 	public Build(final String name, final String webUrl, final Integer lastBuildLabel, final Date lastBuildTime, final String lastBuildStatus, final String activity) {
 		this.name = name;
 		this.webUrl = webUrl;

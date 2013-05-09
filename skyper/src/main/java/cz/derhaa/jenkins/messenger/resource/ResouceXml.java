@@ -31,8 +31,8 @@ import cz.derhaa.jenkins.messenger.build.Build;
 import cz.derhaa.jenkins.messenger.build.MessengerException;
 
 /**
+ * Implementation for resource XML given from jenkins url API.
  * @author derhaa
- * 
  */
 public class ResouceXml extends ResourceBase {
 
@@ -41,7 +41,10 @@ public class ResouceXml extends ResourceBase {
 	private final StringBuilder stringBuilder;
 	private final DocumentBuilderFactory dbf;
 	private final DocumentBuilder docb;
-
+	/**
+	 * It allows to get metadata as xml from jenkins url and parse it
+	 * @param jenkinsUrl
+	 */
 	public ResouceXml(final String jenkinsUrl) {
 		super(jenkinsUrl);
 		try {
@@ -55,7 +58,9 @@ public class ResouceXml extends ResourceBase {
 			throw new MessengerException("Document building failed", e);
 		}
 	}
-
+	/**
+	 * {@inheritDoc}
+	 */
 	public final Set<Build> getBuilds() {
 		final Set<Build> retval = new HashSet<Build>();
 		try {

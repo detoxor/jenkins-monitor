@@ -4,7 +4,7 @@
   <artifactId>messenger</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>HRP Skyper</name>
-  <description>Skyper app for messaging team about Jenkins status</description>
+  <description>App for messaging team about Jenkins status (skype, mail).</description>
   	<properties>
 		<mainClass>cz.derhaa.jenkins.messenger.App</mainClass>
 	</properties>
