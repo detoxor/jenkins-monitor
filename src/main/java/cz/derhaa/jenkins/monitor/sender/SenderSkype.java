@@ -22,6 +22,7 @@ public class SenderSkype extends SenderBase {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SenderSkype.class);
 	private ArrayList<Friend> forMessage;
 	private StringBuilder stringBuilder;
+	public static final String KEY="skype";
 
 	public SenderSkype(final Properties properties) {
 		super(properties);
@@ -57,7 +58,7 @@ public class SenderSkype extends SenderBase {
 			String lastBuildLabel = build.getLastBuildLabel().toString();
 			String message = notice.getMessage();
 			String prefix = "n/a";
-			String hoo = build.getLastBuildStatus().toLowerCase();
+			String hoo = build.getLastBuildStatus().getKey();
 			if(Tool.FAIL.equals(hoo)) {
 				prefix = "(rain)";
 			} else if(Tool.UNSTABLE.equals(hoo)) {

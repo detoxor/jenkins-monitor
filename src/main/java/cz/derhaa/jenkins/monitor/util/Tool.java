@@ -18,13 +18,14 @@ public class Tool {
 	public static final String STABLE_MESSAGE = "Return to Success";
 	public static final String CONTACTS = "contacts";
 	public static final String SENDER_MAIL = "user.mail";
-	public static final String SENDER_EMAIL_PASS = "user.pass";		
+	public static final String SENDER_EMAIL_PASS = "user.pass";
+	public static final String INTERVAL = "interval";
+	public static final String JOBS = "jobs";		
 	
 	private Tool() {
 		//tool class
 	}
 	/**
-	 * 
 	 * Parse string and cut by separator: ','
 	 * @param stringForParse
 	 * @return
@@ -40,5 +41,19 @@ public class Tool {
 			}
 		}
 		return jobs;
+	}
+	/**
+	 * Find commands and parse them and find value
+	 * @param command
+	 * @return null if value not found 
+	 */
+	public static final String parseCommand(String command) {
+		String retval = null;
+		if(command.indexOf("-c") !=-1) {
+			retval = command.split("=")[1];
+		} else if(command.indexOf("-s") !=-1) {
+			retval = command.split("=")[1];
+		}
+		return retval;
 	}
 }

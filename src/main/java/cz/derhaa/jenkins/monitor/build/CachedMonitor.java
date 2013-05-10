@@ -19,20 +19,18 @@ import cz.derhaa.jenkins.monitor.util.Tool;
  * @author derhaa
  * 
  */
-public class BuildMonitor {
+public class CachedMonitor implements Monitor {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(BuildMonitor.class);
-
-	private final StringBuilder stringBuilder;
+	private static final Logger LOGGER = LoggerFactory.getLogger(CachedMonitor.class);
 	private final List<String> jobs;
-	private Map<String, Build> cache;
+	private final Map<String, Build> cache;
 
-	public BuildMonitor(final String jobs) {
-		this.stringBuilder = new StringBuilder();
+	public CachedMonitor(final String jobs) {
 		this.jobs = Tool.parseString(jobs);
 		this.cache = new HashMap<String, Build>();
 	}
 
+	@Override
 	public final void run(final Integer interval) {
 		if (interval == null) {
 			checkNewBuilds();
@@ -53,31 +51,10 @@ public class BuildMonitor {
 		}
 	}
 
-	private final void checkNewBuilds() {
-		final Map<String, Build> builds = fetchBuilds();
-		final List<Notice> notices = new ArrayList<Notice>();
-		for (Entry<String, Build> entry : builds.entrySet()) {
-			final Build build = entry.getValue();
-			final String name = build.getName();
-			final String status = build.getLastBuildStatus();
-			final Build actual = cache.get(name);
-			if (actual == null) {// not exist in cache
-				notices.add(new Notice(build, handleStatusMessage(status, null)));
-			} else if (!actual.getLastBuildStatus().equals(status)) {
-				notices.add(new Notice(build, handleStatusMessage(status, actual.getLastBuildStatus())));
-			} else if (actual.getLastBuildStatus().equals(status) && Tool.FAIL.equals(status)) {
-				notices.add(new Notice(build, Tool.FAIL_STILL_MESSAGE));
-			}
-		}
-		listener.sendNotices(notices);
-		cache = new HashMap<String, Build>(builds);
-	}
-
-	protected final String handleStatusMessage(final String newStatus, final String oldStatus) {
-		final String foo = newStatus.toLowerCase(Locale.ENGLISH);
-		final String hoo = oldStatus == null ? null : oldStatus.toLowerCase(Locale.ENGLISH);
+	public final String getStatusMessage(final Status newStatus, final Status oldStatus) {
+		final String foo = newStatus.getKey().toLowerCase(Locale.ENGLISH);
+		final String hoo = oldStatus == null ? null : oldStatus.getKey().toLowerCase(Locale.ENGLISH);
 		String retval = "N/A";
-		stringBuilder.setLength(0);
 		if (hoo == null) {
 			if (foo.equals(Tool.FAIL)) {
 				retval = Tool.FAIL_MESSAGE;
@@ -104,7 +81,8 @@ public class BuildMonitor {
 		return retval;
 	}
 
-	protected final Map<String, Build> fetchBuilds() {
+	@Override
+	public final Map<String, Build> fetchBuilds(List<String> jobs) {
 		final Map<String, Build> retval = new HashMap<String, Build>();
 		final Set<Build> builds = resource.getBuilds();
 		for (Build build : builds) {
@@ -115,6 +93,27 @@ public class BuildMonitor {
 		return retval;
 	}
 	
+	// --- private methods
+	private final void checkNewBuilds() {
+		final Map<String, Build> builds = fetchBuilds(jobs);
+		final List<Notice> notices = new ArrayList<Notice>();
+		for (Entry<String, Build> entry : builds.entrySet()) {
+			final Build build = entry.getValue();
+			final String name = build.getName();
+			final Status status = build.getLastBuildStatus();
+			final Build actual = cache.get(name);
+			if (actual == null) {// not exist in cache
+				notices.add(new Notice(build, getStatusMessage(status, null)));
+			} else if (!actual.getLastBuildStatus().equals(status)) {
+				notices.add(new Notice(build, getStatusMessage(status, actual.getLastBuildStatus())));
+			} else if (actual.getLastBuildStatus().equals(status) && Tool.FAIL.equals(status)) {
+				notices.add(new Notice(build, Tool.FAIL_STILL_MESSAGE));
+			}
+		}
+		listener.sendNotices(notices);
+		cache.clear();// = new HashMap<String, Build>(builds);
+		cache.putAll(builds);
+	}	
 	
 	// --- IoC
 	private Resource resource;

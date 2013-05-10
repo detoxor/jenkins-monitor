@@ -50,8 +50,11 @@ public class Build {
 		return lastBuildTime;
 	}
 
-	public String getLastBuildStatus() {
-		return lastBuildStatus;
+	public Status getLastBuildStatus() {
+		for (Status status : Status.values()) {
+			if(status.getKey().equals(lastBuildStatus)) return status;
+		}
+		return null;
 	}
 
 	public String getActivity() {
