@@ -11,7 +11,6 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.easymock.EasyMock;
-import org.easymock.IExpectationSetters;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,8 +20,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import cz.derhaa.jenkins.monitor.BaseTest;
 import cz.derhaa.jenkins.monitor.build.Build;
-import cz.derhaa.jenkins.monitor.sender.Notice;
-import cz.derhaa.jenkins.monitor.sender.SenderGMailSSL;
 import cz.derhaa.jenkins.monitor.util.Tool;
 
 @RunWith(PowerMockRunner.class) 
